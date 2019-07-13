@@ -10,11 +10,11 @@ Currently the MIDIUSB library https://github.com/arduino-libraries/MIDIUSB is be
 
 ## Install:
 To aquire this sketch either clone this git repository or copy the contents of the mdials-source directory.
-Requires a means of loading files onto an aduino with at least 2 digital pins. This is most easily accomplished by visiting the arduino website (https://www.arduino.cc/) and downloading the arduino ide. The MIDIUSB library is also currently requiredand can be aquired by visiting the github page linked above.
+Requires a means of loading files onto an aduino with at least 2 digital pins. This is most easily accomplished by visiting the arduino website (https://www.arduino.cc/) and downloading the arduino ide. The MIDIUSB library is also currently required and can be aquired by visiting the github page linked above.
 
 Recommended build strategy: Build code with arduino IDE
 
-Some customization is rquired to use this code. For best results us with an arduino Mega (For the extra pins).Potentiometers should be connected with positive and negative two two digital pins with the potentiometer signal pin connected to an analog arduino pin.
+Some customization is rquired to use this code. For best results us with an arduino Mega. Potentiometers should be connected with positive and negative to two digital pins with the potentiometer signal pin connected to an analog arduino pin.
 ## Use:
 Code should be loaded onto the arduino and connected via usb to a windows(temporarily required) computer.
 
