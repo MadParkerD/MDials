@@ -31,7 +31,7 @@ Wire
 
 ## Software/Libraries
 
-Midi-USB
+USBMIDI(includes V-USB driver under gpl v2.0)
 
 ## LICENSE
-This software is licensed under the gpl v3. A copy of the relevant license may be found in the top level directory of this git repository along with this README.
+This software is licensed under the gpl v3. A copy of the relevant license may be found in the top level directory of this git repository along with this README. A web version can currently be found at https://www.gnu.org/licenses/gpl-3.0.en.html
