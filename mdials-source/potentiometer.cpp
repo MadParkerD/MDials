@@ -9,6 +9,10 @@ class Potentiometer
   int pin2;
 
   int value;
+  
+  uint8_t channel;
+
+  uint8_t control;
 
   uint8_t reader;
 
@@ -16,12 +20,14 @@ class Potentiometer
   {
     digitalWrite(pin1,HIGH);
     digitalWrite(pin2,LOW);
+    delay(2);
   }
   
   void down()
   {
     digitalWrite(pin1,LOW);
     digitalWrite(pin2,LOW);
+    delay(2);
   }
 
   int read()
@@ -29,7 +35,7 @@ class Potentiometer
     up();
     value = analogRead(reader);
     down();
-    delay(1);
+    delay(5);
     return value;
   }
 
@@ -46,8 +52,15 @@ class Potentiometer
   {
     if(changed(read()))
     {
-      sendCC
+        USBMIDI.write(0xB0 | (channel & 0xf));
+        USBMIDI.write(control & 0x7f);
+        USBMIDI.write(value & 0x7f);
     }
     
+  }
+
+  void print()
+  {
+    Serial.print(value/8);
   }
 };
