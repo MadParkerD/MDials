@@ -1,5 +1,10 @@
 #include "Arduino.h"
-#include <usbmidi.h>
+#include <MIDI.h>
+struct MySettings : public midi::DefaultSettings
+{
+    static const long BaudRate = 115200;
+};
+
 class Potentiometer
 {
   public:
@@ -23,10 +28,10 @@ class Potentiometer
     {
     pinMode(pin1,OUTPUT);
     pinMode(pin2,OUTPUT);
-    delay(10);
+    delay(1);
     digitalWrite(pin1,HIGH);
     digitalWrite(pin2,LOW);
-    delay(10);
+    delay(1);
     }
 
   /* 
@@ -36,10 +41,10 @@ class Potentiometer
     {
       digitalWrite(pin1,LOW);
       digitalWrite(pin2,LOW);
-      delay(10);
+      delay(1);
       pinMode(pin1,INPUT);
       pinMode(pin2,INPUT);
-      delay(10);
+      delay(1);
 
     }
 
@@ -53,10 +58,7 @@ class Potentiometer
     int read()
     {
       up();
-      delay(10);
-      analogRead(reader);
       value = analogRead(reader);
-      delay(10);
       down();
       delay(5);
       return value;
@@ -87,14 +89,12 @@ class Potentiometer
    * the midictrl example provided by usbmidi on their github:
    * https://github.com/BlokasLabs/USBMIDI/blob/master/examples/midictrl/midictrl.ino
    */
-    bool send()
+    bool send(midi::MidiInterface<HardwareSerial,MySettings>& MIDI)
     {
       if(changed(read()))
       {
-        uint8_t val = value/8;      
-        USBMIDI.write(0xB0 | (channel & 0xf));
-        USBMIDI.write(control & 0x7f);
-        USBMIDI.write(val & 0x7f);
+        uint8_t val = value/8;
+        MIDI.sendControlChange(control,value,channel);
       }
     
     }
@@ -106,10 +106,10 @@ class Potentiometer
     void print()
     {
       
-      Serial.print(pin1);
-      Serial.print(" | ");
-      Serial.print(pin2);
-      Serial.print(" | ");
-      Serial.print(value);
+      //Serial.print(pin1);
+      //Serial.print(" | ");
+      //Serial.print(pin2);
+      //Serial.print(" | ");
+      //Serial.print(value);
     }
 };

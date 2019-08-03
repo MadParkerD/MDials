@@ -1,7 +1,10 @@
 #include "potentiometer.cpp"
-#include <usbmidi.h>
-/*Define Potentiometers here, as many as you have. 
-  These objects will be used later to control multiplexing.*/
+
+MIDI_CREATE_CUSTOM_INSTANCE(HardwareSerial,Serial,MIDI,MySettings);
+
+
+// Create a 'MIDI' object using MySettings bound to Serial2.
+
 Potentiometer c1;
 Potentiometer c2;
 Potentiometer c3;
@@ -11,11 +14,6 @@ const int numPots=2;
 Potentiometer pots[numPots];
 
 void setup() {
-/*Define pin type here. Your arduino may have a different
-  pin configuration but as a general practice pins should
-  be set to output.*/
-  
-
 /*Set pins here
   Pins should be set with one pin per voltage/ground on your 
   potentiometer. This is generally the two outer pins--with 
@@ -60,18 +58,18 @@ void setup() {
 
   c1.pin1 = 4;
   c1.pin2 = 5;
-  c1.reader = 14;
+  c1.reader = A0;
   c1.value = 0;
-  c1.channel = 0;
-  c1.control = 0;
+  c1.channel = 1;
+  c1.control = 1;
 
   
   c2.pin1 = 6;
   c2.pin2 = 7;
-  c2.reader = 14;
+  c2.reader = A0;
   c2.value = 0;
-  c2.channel = 0;
-  c2.control = 0;
+  c2.channel = 1;
+  c2.control = 2;
 
   c3.pin1 = 3;
   c3.pin2 = 11;
@@ -86,27 +84,24 @@ void setup() {
   {
     pots[i] = init[i];
   }
-  Serial.begin(9600);
+  
+  while (!Serial);
+  MIDI.begin(1);
+  Serial.begin(115200);
 }
 
 // the loop routine runs over and over again forever:
 void loop() {
+
   for (int i = 0; i < numPots; i++)
   {
     pots[i].read();
-    pots[i].print();
+    MIDI.sendControlChange(pots[i].control,pots[i].value/8,pots[i].channel);
     if((i+1) < numPots)
     {
-      Serial.print(" | ");
+
     }
   }
-  Serial.println("");
 
-  USBMIDI.poll();
-  while (USBMIDI.available()) {
-    u8 message = USBMIDI.read();
-  }
-  // Flush the output.
-  USBMIDI.flush();
-  
+  MIDI.read();
 }
