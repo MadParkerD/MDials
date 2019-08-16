@@ -1,9 +1,4 @@
 #include "Arduino.h"
-#include <MIDI.h>
-struct MySettings : public midi::DefaultSettings
-{
-    static const long BaudRate = 115200;
-};
 
 class Potentiometer
 {
@@ -51,14 +46,17 @@ class Potentiometer
 
   /*
    * This function reads the potentiometer
-   * Uses the "char" passed in when creating the potentiometer
+   * Uses the value passed in when creating the potentiometer
    * for reading, this is generally A0-Ax depending on the
-   * number of analog pins on your arduino.
+   * number of analog pins on your arduino. On an uno values of 
+   * 14-19 correspond to A0-A5 and can be used instead. 
+   * On a mega values of 82-97 correspond to A15-A0 with
+   * 97 being A0 and 82 being A15
    */
     int read()
     {
       up();
-      value = analogRead(reader);
+      value = analogRead(reader)/8;
       down();
       delay(5);
       return value;
@@ -67,45 +65,27 @@ class Potentiometer
   /*
    *To avoid saturating the interface this function checks a 
    *value to see if it is changed. No real point in sending values 
-   *if they are not changed because this is using midiCC 
+   *if they are not changed because this is using midiCC ONLY
    *and a send does not correspond to a played note but rather a 
    *change in a continous value.
    */
-    bool changed(int newValue)
+    bool changed()
     {
-      if (newValue/8 != value/8)
+      uint8_t old = value;
+      if (old != read())
       {
         return true;
       }
       return false;
     }
-
-  /*
-   * Send midi control change
-   * Value/8 here is implicitly cast to uint8_t
-   * This is fine because the maximum read for
-   * analog pins is 1023 and 1023/8 < 255
-   * The write calls themselves are substantially sumilar to 
-   * the midictrl example provided by usbmidi on their github:
-   * https://github.com/BlokasLabs/USBMIDI/blob/master/examples/midictrl/midictrl.ino
-   */
-    bool send(midi::MidiInterface<HardwareSerial,MySettings>& MIDI)
-    {
-      if(changed(read()))
-      {
-        uint8_t val = value/8;
-        MIDI.sendControlChange(control,value,channel);
-      }
     
-    }
-
   /*
-   * Print the value that would be sent via midiCC
-   * Mostly useful for debug
+   * Print the values of the potentiometers, need to enable serial in main for this to work. 
+   * Does NOT work with HIDUINO firmware and can mess things up if enabled while 
+   * firmware is installed. Uncomment AT OWN RISK
    */
     void print()
     {
-      
       //Serial.print(pin1);
       //Serial.print(" | ");
       //Serial.print(pin2);
